@@ -1,5 +1,6 @@
 <?php
 
+use App\Layouts\TabsLayout;
 use App\NativeComponents\ArticleReader;
 use App\NativeComponents\Assistant;
 use App\NativeComponents\CookMode;
@@ -9,13 +10,18 @@ use App\NativeComponents\LanguagePractice;
 use App\NativeComponents\Note;
 use App\NativeComponents\Notes;
 use App\NativeComponents\Playgrounds\ForceUpdatePlayground;
+use App\NativeComponents\Playgrounds\PlaygroundsIndex;
 use App\NativeComponents\Playgrounds\SharePlayground;
 use App\NativeComponents\Playgrounds\SpeechToTextPlayground;
 use App\NativeComponents\Playgrounds\TextToSpeechPlayground;
 use App\NativeComponents\UpdateRequired;
 use Illuminate\Support\Facades\Route;
 
-Route::native('/', Home::class);
+Route::nativeGroup(TabsLayout::class, function () {
+    Route::native('/', Home::class);
+    Route::native('/playgrounds', PlaygroundsIndex::class);
+});
+
 Route::native('/update', UpdateRequired::class);
 
 Route::native('/assistant', Assistant::class);

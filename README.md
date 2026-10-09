@@ -2,9 +2,9 @@
 
 An independent demo app by [vipertecpro](https://vipertecpro.com): six example apps and four playgrounds that show four PARqore plugins for NativePHP Mobile in the places people expect them: a microphone in a chat box, a speaker next to a reply, the system share sheet, and an update screen.
 
-Everything is written in PHP with NativePHP Mobile's native screens, and runs on iPhone and Android.
+Everything is written in PHP with NativePHP Mobile's native screens, runs on iPhone and Android, and follows the phone's light or dark mode.
 
-> **Disclosure:** PARqore provided the plugin licences I used to build this demo. This demo is my own work: it is not an official PARqore repository, and it is not made or endorsed by NativePHP.
+> **Disclosure:** [PARqore](https://parqore.com) provided the plugin licences I used to build this demo. This demo is my own work: it is not an official PARqore repository, and it is not made or endorsed by NativePHP.
 
 ## The plugins it uses
 

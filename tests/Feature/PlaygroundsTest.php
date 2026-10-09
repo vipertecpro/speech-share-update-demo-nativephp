@@ -1,5 +1,6 @@
 <?php
 
+use App\NativeComponents\Playgrounds\PlaygroundsIndex;
 use App\NativeComponents\Playgrounds\SharePlayground;
 use App\NativeComponents\Playgrounds\SpeechToTextPlayground;
 use App\NativeComponents\Playgrounds\TextToSpeechPlayground;
@@ -68,4 +69,12 @@ it('shares a link, text and a file, and reports the app', function () {
         ->assertShareTargeted('com.whatsapp')
         ->tap('Share a file')
         ->assertFilesShared();
+});
+
+it('lists one playground per plugin', function () {
+    Native::test(PlaygroundsIndex::class)
+        ->assertSee('Speech to Text')
+        ->assertSee('Text to Speech')
+        ->assertSee('Native Share')
+        ->assertSee('Force Update');
 });
