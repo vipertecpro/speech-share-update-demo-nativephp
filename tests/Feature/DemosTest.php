@@ -21,7 +21,7 @@ beforeEach(function () {
 });
 
 it('listens while the microphone is held and sends what you said when you let go', function () {
-    $reply = Replies::SUGGESTIONS['Plan a weekend in Jaipur'];
+    $reply = Replies::SUGGESTIONS['Plan a weekend in Goa'];
 
     $screen = Native::test(Assistant::class)
         ->pressDown('startHold')
@@ -34,9 +34,9 @@ it('listens while the microphone is held and sends what you said when you let go
 
     $screen->pressUp('endHold')
         ->assertSpeechListeningStopped()
-        ->hearSpeech('plan a weekend in Jaipur')
+        ->hearSpeech('plan a weekend in Goa')
         ->assertSet('draft', '')
-        ->assertSee('Amber Fort')
+        ->assertSee('Fontainhas')
         ->assertNothingSpoken()
         ->tap('read-1')
         ->assertSpoke($reply)
@@ -44,6 +44,22 @@ it('listens while the microphone is held and sends what you said when you let go
         ->assertTextShared('Assistant reply', $reply)
         ->completeShare('com.whatsapp')
         ->assertSee('Shared with WhatsApp.');
+});
+
+it('types dictated words out a character at a time', function () {
+    $this->freezeTime();
+
+    $screen = Native::test(Assistant::class)
+        ->pressDown('startHold')
+        ->hearPartialSpeech('Plan a weekend in Goa');
+
+    expect($screen->instance()->composerText())->toBe('');
+
+    $this->travel(Assistant::TYPE_MS * 4)->milliseconds();
+    expect($screen->instance()->composerText())->toBe('Plan');
+
+    $this->travel(1)->seconds();
+    expect($screen->instance()->composerText())->toBe('Plan a weekend in Goa');
 });
 
 it('sends straight away when the phone finished listening before you let go', function () {

@@ -41,6 +41,40 @@ class Assistant extends DemoScreen
     /** Presses shorter than this are taps, not holds. */
     public const HOLD_MS = 400;
 
+    /** How fast dictated words type out, in milliseconds per character. */
+    public const TYPE_MS = 22;
+
+    /** How many characters were on screen when the latest words arrived. */
+    public int $revealFrom = 0;
+
+    /** When the latest words arrived, in milliseconds. */
+    public ?int $revealStartedAt = null;
+
+    /**
+     * The message box text as it types out: the recognizer sends words in
+     * bursts, and each burst is revealed a character at a time.
+     */
+    public function composerText(): string
+    {
+        return mb_substr($this->draft, 0, $this->shownLength());
+    }
+
+    public function isRevealing(): bool
+    {
+        return $this->shownLength() < mb_strlen($this->draft);
+    }
+
+    private function shownLength(): int
+    {
+        if ($this->revealStartedAt === null) {
+            return mb_strlen($this->draft);
+        }
+
+        $typed = intdiv(max(0, (int) now()->getPreciseTimestamp(3) - $this->revealStartedAt), self::TYPE_MS);
+
+        return min(mb_strlen($this->draft), $this->revealFrom + $typed);
+    }
+
     public function startHold(): void
     {
         if ($this->listening) {
@@ -87,6 +121,7 @@ class Assistant extends DemoScreen
         }
 
         $this->draft = '';
+        $this->revealStartedAt = null;
         $this->ask($prompt);
     }
 
@@ -166,6 +201,10 @@ class Assistant extends DemoScreen
 
     protected function fillDictationField(string $field, string $text): void
     {
+        // Keep what's already typed out, and type the rest from there.
+        $shown = mb_strlen($this->composerText());
+        $this->revealFrom = min($shown, mb_strlen($text));
+        $this->revealStartedAt = (int) now()->getPreciseTimestamp(3);
         $this->draft = $text;
     }
 

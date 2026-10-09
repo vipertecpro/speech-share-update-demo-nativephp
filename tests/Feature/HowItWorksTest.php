@@ -43,6 +43,6 @@ it('says what comes from the plugins and what the demo adds', function (string $
 
 it('keeps the chat clear once a conversation starts', function () {
     Native::test(Assistant::class)
-        ->tap('Plan a weekend in Jaipur')
+        ->tap('Plan a weekend in Goa')
         ->assertDontSee('Built in this demo');
 });

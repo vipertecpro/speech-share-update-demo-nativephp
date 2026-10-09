@@ -16,7 +16,9 @@
                     <native:column key="field-{{ $field }}" class="w-full gap-2">
                         <native:row class="w-full items-center gap-3">
                             <native:outlined-text-input label="{{ $label }}" native:model.debounce.300ms="{{ $field }}" multiline min-lines="{{ $field === 'site' ? 1 : 3 }}" class="flex-1" />
-                            <native:button ref="mic-{{ $field }}" variant="{{ $listening && $dictatingInto === $field ? 'destructive' : 'secondary' }}" a11y-label="{{ $listening && $dictatingInto === $field ? 'Stop dictation' : 'Dictate '.$label }}" ios-icon="{{ $listening && $dictatingInto === $field ? 'stop.fill' : 'mic.fill' }}" android-icon="{{ $listening && $dictatingInto === $field ? 'stop' : 'mic' }}" :disabled="$listening && $dictatingInto !== $field" @press="toggleDictation('{{ $field }}')" />
+                            <native:pressable ref="mic-{{ $field }}" @press="toggleDictation('{{ $field }}')" a11y-label="{{ $listening && $dictatingInto === $field ? 'Stop dictation' : 'Dictate '.$label }}" class="w-[48] h-[48] rounded-full items-center justify-center {{ $listening && $dictatingInto === $field ? 'bg-theme-destructive' : 'bg-theme-primary/15' }} {{ $listening && $dictatingInto !== $field ? 'opacity-40' : '' }}">
+                                <native:icon ios="{{ $listening && $dictatingInto === $field ? 'stop.fill' : 'mic.fill' }}" android="{{ $listening && $dictatingInto === $field ? 'stop' : 'mic' }}" :size="22" class="{{ $listening && $dictatingInto === $field ? 'text-theme-on-destructive' : 'text-theme-primary' }}" />
+                            </native:pressable>
                         </native:row>
                         @if ($listening && $dictatingInto === $field)
                             @include('native.partials.listening', ['heard' => $heard])

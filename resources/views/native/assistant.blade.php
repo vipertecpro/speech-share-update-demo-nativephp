@@ -63,18 +63,26 @@
     </native:scroll-view>
 
     <native:column class="w-full gap-2 px-4 pt-2 pb-6 bg-theme-background">
-        @if ($listening)
-            @include('native.partials.listening', ['heard' => $heard, 'hint' => $holdStartedAt !== null ? 'Let go to send' : null])
-        @elseif ($status !== '')
-            <native:text class="text-xs text-center text-theme-on-surface-variant">{{ $status }}</native:text>
-        @endif
+        {{-- Always present, so the message bar never changes position while the microphone is held. --}}
+        <native:column native:key="composer-status" class="w-full">
+            @if ($listening)
+                @include('native.partials.listening', ['heard' => $this->composerText(), 'hint' => $holdStartedAt !== null ? 'Let go to send' : null, 'typewriter' => true])
+            @elseif ($status !== '')
+                <native:text class="w-full text-xs text-center text-theme-on-surface-variant">{{ $status }}</native:text>
+            @endif
+        </native:column>
 
-        <native:row key="composer" class="w-full items-center gap-2 rounded-full bg-theme-surface border border-theme-outline-variant pl-5 pr-2 py-2">
-            <native:bare-text-input placeholder="Message" native:model.debounce.300ms="draft" multiline max-lines="5" class="flex-1 text-base" />
-            <native:pressable key="hold-to-talk" @tapDown="startHold" @tapUp="endHold" a11y-label="Hold to talk" class="w-[44] h-[44] rounded-full items-center justify-center {{ $listening ? 'bg-theme-destructive' : 'bg-theme-primary/15' }}">
-                <native:icon ios="mic.fill" android="mic" :size="22" class="{{ $listening ? 'text-theme-on-destructive' : 'text-theme-primary' }}" />
+        <native:row native:key="composer" class="w-full items-center gap-2 rounded-full bg-theme-surface border border-theme-outline-variant pl-5 pr-2 py-2">
+            <native:bare-text-input placeholder="Message" :value="$this->composerText()" @change="__syncProperty('draft')" sync-mode="debounce" debounce-ms="300" multiline max-lines="5" class="flex-1 text-base" />
+            <native:stack native:key="hold-to-talk-stack" class="w-[48] h-[48] items-center justify-center">
+                <native:column native:key="hold-to-talk-ring" class="w-[48] h-[48] rounded-full bg-theme-destructive/30 {{ $listening ? '' : 'opacity-0' }}" scale="{{ $listening ? 1.6 : 1 }}" animate-loop="{{ $listening ? 'true' : 'false' }}" animate-duration="750" animate-easing="ease-in-out" />
+                <native:pressable native:key="hold-to-talk" @tapDown="startHold" @tapUp="endHold" a11y-label="Hold to talk" press-scale="1.18" scale="{{ $listening ? 1.12 : 1 }}" animate-duration="160" class="w-[48] h-[48] rounded-full items-center justify-center {{ $listening ? 'bg-theme-destructive' : 'bg-theme-primary/15' }}">
+                    <native:icon ios="mic.fill" android="mic" :size="22" class="{{ $listening ? 'text-theme-on-destructive' : 'text-theme-primary' }}" />
+                </native:pressable>
+            </native:stack>
+            <native:pressable native:key="send" ref="send" @press="send" a11y-label="Send" class="w-[48] h-[48] rounded-full items-center justify-center {{ trim($draft) === '' ? 'bg-theme-surface-variant' : 'bg-theme-primary' }}">
+                <native:icon ios="arrow.up" android="arrow_upward" :size="22" class="{{ trim($draft) === '' ? 'text-theme-on-surface-variant' : 'text-theme-on-primary' }}" />
             </native:pressable>
-            <native:button ref="send" variant="primary" size="sm" a11y-label="Send" ios-icon="arrow.up" android-icon="arrow_upward" :disabled="trim($draft) === ''" @press="send" />
         </native:row>
     </native:column>
 </native:column>
