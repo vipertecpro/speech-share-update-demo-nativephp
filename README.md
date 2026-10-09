@@ -1,4 +1,4 @@
-# PARqore Plugins Demo App
+# NativePHP Speech, Share and Update Demo
 
 An independent demo app by [vipertecpro](https://vipertecpro.com): six example apps and four playgrounds that show four PARqore plugins for NativePHP Mobile in the places people expect them: a microphone in a chat box, a speaker next to a reply, the system share sheet, and an update screen.
 
@@ -75,8 +75,8 @@ Speech recognition runs on the phone where the language supports it. Otherwise i
 2. Clone this repository and copy the environment file:
 
    ```bash
-   git clone https://github.com/vipertecpro/parqore-plugins-demo-app.git
-   cd parqore-plugins-demo-app
+   git clone https://github.com/vipertecpro/nativephp-speech-share-update-demo.git
+   cd nativephp-speech-share-update-demo
    cp .env.example .env
    ```
 
