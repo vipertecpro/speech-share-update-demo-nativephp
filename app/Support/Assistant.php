@@ -2,6 +2,8 @@
 
 namespace App\Support;
 
+use Illuminate\Support\Str;
+
 /**
  * Sample replies for the assistant demo, so it works offline. A real app
  * sends the message to its AI model here; the microphone, read-aloud and
@@ -23,11 +25,20 @@ class Assistant
     public static function reply(string $prompt): string
     {
         foreach (self::SUGGESTIONS as $suggestion => $reply) {
-            if (mb_strtolower(trim($prompt)) === mb_strtolower($suggestion)) {
+            if (self::normalise($prompt) === self::normalise($suggestion)) {
                 return $reply;
             }
         }
 
         return "This is where your AI model's answer appears. The demo uses sample replies so it works offline, and the three suggestions show longer ones.\n\nEverything around the answer is real: you can dictate your message with the microphone, have replies read aloud, and share any reply to another app.";
+    }
+
+    /**
+     * Case, punctuation and accents don't matter, so a dictated request
+     * ("write a polite follow up email") matches its suggestion.
+     */
+    private static function normalise(string $text): string
+    {
+        return Str::of(Str::ascii($text))->lower()->replaceMatches('/[^a-z0-9]+/', ' ')->squish()->toString();
     }
 }

@@ -20,21 +20,24 @@ beforeEach(function () {
     Native::fakeBridge()->withSpeechRecognition()->withTextToSpeech();
 });
 
-it('fills the chat composer while you speak, then reads and shares the reply', function () {
+it('listens while the microphone is held and sends what you said when you let go', function () {
     $reply = Replies::SUGGESTIONS['Plan a weekend in Jaipur'];
 
-    Native::test(Assistant::class)
-        ->tap('mic')
+    $screen = Native::test(Assistant::class)
+        ->pressDown('startHold')
         ->assertListeningForSpeech()
+        ->assertSee('Let go to send')
         ->hearPartialSpeech('Plan a weekend')
-        ->assertSet('draft', 'Plan a weekend')
-        ->hearSpeech('Plan a weekend in Jaipur')
-        ->assertSet('draft', 'Plan a weekend in Jaipur')
-        ->assertSet('listening', false)
-        ->assertNothingSpoken()
-        ->tap('send')
+        ->assertSet('draft', 'Plan a weekend');
+
+    $this->travel(2)->seconds();
+
+    $screen->pressUp('endHold')
+        ->assertSpeechListeningStopped()
+        ->hearSpeech('plan a weekend in Jaipur')
         ->assertSet('draft', '')
         ->assertSee('Amber Fort')
+        ->assertNothingSpoken()
         ->tap('read-1')
         ->assertSpoke($reply)
         ->tap('share-1')
@@ -43,10 +46,35 @@ it('fills the chat composer while you speak, then reads and shares the reply', f
         ->assertSee('Shared with WhatsApp.');
 });
 
-it('sends what you said and reads the reply aloud in voice mode', function () {
+it('sends straight away when the phone finished listening before you let go', function () {
+    $screen = Native::test(Assistant::class)
+        ->pressDown('startHold')
+        ->hearSpeech('write a polite follow up email');
+
+    $this->travel(5)->seconds();
+
+    $screen->pressUp('endHold')
+        ->assertSee('Following up on our conversation');
+});
+
+it('treats a quick tap on the microphone as a hint, not a message', function () {
     Native::test(Assistant::class)
+        ->pressDown('startHold')
+        ->pressUp('endHold')
+        ->assertSpeechListeningCancelled()
+        ->assertSet('listening', false)
+        ->assertSet('messages', [])
+        ->assertSee('Hold the microphone while you speak.');
+});
+
+it('reads every reply aloud in voice mode', function () {
+    $screen = Native::test(Assistant::class)
         ->call('toggleVoiceMode')
-        ->tap('mic')
+        ->pressDown('startHold');
+
+    $this->travel(2)->seconds();
+
+    $screen->pressUp('endHold')
         ->hearSpeech('Explain recursion like I’m five')
         ->assertSee('standing in a line')
         ->assertSpoke(Replies::SUGGESTIONS['Explain recursion like I’m five']);

@@ -20,7 +20,7 @@ class DemoNotes
         ],
         'assistant' => [
             'plugins' => 'Speech to Text fills the message box as you speak. Text to Speech reads replies aloud. Native Share sends a reply or the whole chat.',
-            'demo' => 'The chat, its sample replies (there is no AI model in this demo), and voice mode, which sends your message when you stop speaking.',
+            'demo' => 'The chat, its sample replies (there is no AI model in this demo), hold-to-talk, which sends your message when you let go of the microphone, and voice mode reading replies aloud.',
         ],
         'note' => [
             'plugins' => 'Speech to Text turns speech into the note’s text. Text to Speech reads it back. Native Share sends it and reports the app that was picked.',

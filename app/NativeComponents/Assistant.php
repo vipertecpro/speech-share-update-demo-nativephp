@@ -7,12 +7,16 @@ use App\NativeComponents\Concerns\ReadsAloud;
 use App\NativeComponents\Concerns\Shares;
 use App\Support\Assistant as Replies;
 use Illuminate\View\View;
+use PARTek\SpeechToText\Facades\SpeechToText;
 
 /**
  * An AI chat screen with the plugins where people expect them: a microphone
  * in the composer (Speech to Text), a speaker on every reply (Text to
- * Speech) and a share button on every reply (Native Share). Voice mode
- * sends what you said as soon as you stop and reads the reply aloud.
+ * Speech) and a share button on every reply (Native Share).
+ *
+ * The microphone is hold-to-talk, like a voice message: hold it while you
+ * speak, and the message sends when you let go. Voice mode also reads every
+ * reply aloud.
  */
 class Assistant extends DemoScreen
 {
@@ -25,8 +29,54 @@ class Assistant extends DemoScreen
 
     public string $draft = '';
 
-    /** Hands-free: send when dictation ends and read every reply aloud. */
+    /** Read every reply aloud. */
     public bool $voiceMode = false;
+
+    /** When the microphone was pressed, in milliseconds, or null when it isn't held. */
+    public ?int $holdStartedAt = null;
+
+    /** Send the message as soon as the final words arrive. */
+    public bool $sendWhenHeard = false;
+
+    /** Presses shorter than this are taps, not holds. */
+    public const HOLD_MS = 400;
+
+    public function startHold(): void
+    {
+        if ($this->listening) {
+            return;
+        }
+
+        $this->holdStartedAt = (int) now()->getPreciseTimestamp(3);
+        $this->sendWhenHeard = false;
+        $this->toggleDictation('draft');
+    }
+
+    public function endHold(): void
+    {
+        $heldFor = $this->holdStartedAt === null ? 0 : (int) now()->getPreciseTimestamp(3) - $this->holdStartedAt;
+        $this->holdStartedAt = null;
+
+        if ($heldFor < self::HOLD_MS) {
+            if ($this->listening) {
+                $this->cancelDictation();
+            }
+            $this->status = 'Hold the microphone while you speak.';
+
+            return;
+        }
+
+        if ($this->listening) {
+            // The final words arrive in onDictated, which sends them.
+            $this->sendWhenHeard = true;
+            SpeechToText::stop();
+
+            return;
+        }
+
+        // The phone already finished listening while the button was held.
+        $this->send();
+    }
 
     public function send(): void
     {
@@ -57,7 +107,7 @@ class Assistant extends DemoScreen
     {
         $this->voiceMode = ! $this->voiceMode;
         $this->status = $this->voiceMode
-            ? 'Voice mode on: speak, and the reply is read aloud.'
+            ? 'Voice mode on: every reply is read aloud.'
             : 'Voice mode off.';
 
         if (! $this->voiceMode && $this->speaking) {
@@ -121,7 +171,8 @@ class Assistant extends DemoScreen
 
     protected function afterDictation(string $field): void
     {
-        if ($this->voiceMode) {
+        if ($this->sendWhenHeard) {
+            $this->sendWhenHeard = false;
             $this->send();
         }
     }

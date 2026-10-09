@@ -27,7 +27,7 @@ No other plugins are needed. Composer also installs two free packages: [NativePH
 
 | Demo | From the plugins | Built in this demo |
 |---|---|---|
-| **AI Assistant** | Speech to Text fills the message box as you speak. Text to Speech reads replies aloud. Native Share sends a reply or the whole chat. | The chat, its sample replies (there is no AI model here), and voice mode, which sends your message when you stop speaking. |
+| **AI Assistant** | Speech to Text fills the message box as you speak. Text to Speech reads replies aloud. Native Share sends a reply or the whole chat. | The chat, its sample replies (there is no AI model here), hold-to-talk, which sends your message when you let go of the microphone, and voice mode reading replies aloud. |
 | **Voice Notes** | Speech to Text turns speech into the note's text. Text to Speech reads it back. Native Share sends it and reports the app that was picked. | Saving notes, adding new dictation to the end, and names like "Gmail" worked out from the app id the plugin reports. |
 | **Cook Mode** | Text to Speech reads each step and reports when it finishes. Native Share sends the shopping list. | Moving to the next step when one finishes, and pause on Android (see below). |
 | **Language Practice** | Text to Speech says the phrase in a voice for its language. Speech to Text listens in that language and returns the words it heard. | The % match, which compares the words the phone heard with the phrase. It doesn't judge pronunciation. |
@@ -55,6 +55,8 @@ One screen per plugin, with every option it offers and a live log of each call t
 
 The minimums come from the plugins: Speech to Text, Text to Speech and Force Update need iOS 18 and Android 8.0. Native Share alone works from iOS 15 and Android 5.0.
 
+NativePHP builds for Android 13 (API 33) and later unless you set a lower minimum, so `.env.example` sets `NATIVEPHP_ANDROID_MIN_SDK=26` to match the plugins.
+
 ## Permissions
 
 Only Speech to Text asks for permissions. The plugin adds them to the app for you, and the phone asks the user the first time they tap a microphone.
@@ -71,7 +73,7 @@ Speech recognition runs on the phone where the language supports it. Otherwise i
 
 ## Getting started
 
-1. Buy the four plugins on the NativePHP Marketplace and give Composer access as your dashboard describes.
+1. Buy the four plugins on the NativePHP Marketplace. Your dashboard there shows the NativePHP plugin repository and your login: add both to your own Composer setup as it describes. Keep the login in your global Composer config or a local `auth.json`, and never commit `auth.json`. This repository's `.gitignore` already leaves it out.
 2. Clone this repository and copy the environment file:
 
    ```bash

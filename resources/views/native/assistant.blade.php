@@ -16,7 +16,7 @@
                         <native:icon ios="sparkles" android="auto_awesome" :size="34" class="text-theme-on-primary" />
                     </native:column>
                     <native:text class="text-2xl font-bold text-center text-theme-on-surface">What can I help with?</native:text>
-                    <native:text class="text-sm text-center text-theme-on-surface-variant">Type, or tap the microphone and talk. The headphones turn on voice mode for a hands-free chat.</native:text>
+                    <native:text class="text-sm text-center text-theme-on-surface-variant">Type, or hold the microphone and talk. It sends when you let go, and the headphones read every reply aloud.</native:text>
                 </native:column>
 
                 @include('native.partials.section-label', ['text' => 'TRY ASKING'])
@@ -64,14 +64,16 @@
 
     <native:column class="w-full gap-2 px-4 pt-2 pb-6 bg-theme-background">
         @if ($listening)
-            @include('native.partials.listening', ['heard' => $heard])
+            @include('native.partials.listening', ['heard' => $heard, 'hint' => $holdStartedAt !== null ? 'Let go to send' : null])
         @elseif ($status !== '')
             <native:text class="text-xs text-center text-theme-on-surface-variant">{{ $status }}</native:text>
         @endif
 
-        <native:row class="w-full items-center gap-2 rounded-full bg-theme-surface border border-theme-outline-variant pl-5 pr-2 py-2">
+        <native:row key="composer" class="w-full items-center gap-2 rounded-full bg-theme-surface border border-theme-outline-variant pl-5 pr-2 py-2">
             <native:bare-text-input placeholder="Message" native:model.debounce.300ms="draft" multiline max-lines="5" class="flex-1 text-base" />
-            <native:button ref="mic" variant="{{ $listening ? 'destructive' : 'ghost' }}" size="sm" a11y-label="{{ $listening ? 'Stop dictation' : 'Dictate' }}" ios-icon="{{ $listening ? 'stop.fill' : 'mic.fill' }}" android-icon="{{ $listening ? 'stop' : 'mic' }}" @press="toggleDictation('draft')" />
+            <native:pressable key="hold-to-talk" @tapDown="startHold" @tapUp="endHold" a11y-label="Hold to talk" class="w-[44] h-[44] rounded-full items-center justify-center {{ $listening ? 'bg-theme-destructive' : 'bg-theme-primary/15' }}">
+                <native:icon ios="mic.fill" android="mic" :size="22" class="{{ $listening ? 'text-theme-on-destructive' : 'text-theme-primary' }}" />
+            </native:pressable>
             <native:button ref="send" variant="primary" size="sm" a11y-label="Send" ios-icon="arrow.up" android-icon="arrow_upward" :disabled="trim($draft) === ''" @press="send" />
         </native:row>
     </native:column>
