@@ -1,6 +1,6 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "vipertecpro/plugin-demos",
+    "name": "vipertecpro/parqore-plugins-demo-app",
     "type": "project",
     "description": "Six example apps and four playgrounds for the PARqore Speech to Text, Text to Speech, Native Share and Force Update plugins for NativePHP Mobile.",
     "keywords": [
