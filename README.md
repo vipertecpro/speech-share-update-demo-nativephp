@@ -27,7 +27,7 @@ No other plugins are needed. Composer also installs two free packages: [NativePH
 
 | Demo | From the plugins | Built in this demo |
 |---|---|---|
-| **AI Assistant** | Speech to Text fills the message box as you speak. Text to Speech reads replies aloud. Native Share sends a reply or the whole chat. | The chat, its sample replies (there is no AI model here), hold-to-talk, which sends your message when you let go of the microphone, and voice mode reading replies aloud. |
+| **AI Assistant** | Speech to Text fills the message box as you speak. Text to Speech reads replies aloud. Native Share sends a reply or the whole chat. | The chat and its sample replies (no AI model here), hold-to-talk, which sends your message when you let go of the microphone, and voice mode reading replies aloud. |
 | **Voice Notes** | Speech to Text turns speech into the note's text. Text to Speech reads it back. Native Share sends it and reports the app that was picked. | Saving notes, adding new dictation to the end, and names like "Gmail" worked out from the app id the plugin reports. |
 | **Cook Mode** | Text to Speech reads each step and reports when it finishes. Native Share sends the shopping list. | Moving to the next step when one finishes, and pause on Android (see below). |
 | **Language Practice** | Text to Speech says the phrase in a voice for its language. Speech to Text listens in that language and returns the words it heard. | The % match, which compares the words the phone heard with the phrase. It doesn't judge pronunciation. |
